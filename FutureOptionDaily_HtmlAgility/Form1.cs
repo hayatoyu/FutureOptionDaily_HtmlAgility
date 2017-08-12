@@ -881,7 +881,9 @@ namespace FutureOptionDaily_HtmlAgility
             }
             ie.SelectList(Find.ByName("dd")).SelectByValue(date.Day.ToString());
             ie.Link(Find.ByClass("button search")).Click();
+            
             Table table = ie.Table(Find.ById("credit-table"));
+            WaitForMarginTable(ref table,ie, 10);
             long.TryParse(table.TableRows[2].TableCells[4].Text.Replace(",", string.Empty), out y_Sell);
             long.TryParse(table.TableRows[2].TableCells[5].Text.Replace(",", string.Empty), out t_Sell);
             long.TryParse(table.TableRows[3].TableCells[4].Text.Replace(",", string.Empty), out y_Buy);
@@ -1088,6 +1090,18 @@ namespace FutureOptionDaily_HtmlAgility
             {
                 if (list.Options.Count == daycount)
                     return true;
+            }
+            return false;
+        }
+
+        private bool WaitForMarginTable(ref Table table,IE ie,int Timeout)
+        {
+            DateTime StartTime = DateTime.Now;
+            while(DateTime.Now.Subtract(StartTime).Seconds < Timeout)
+            {
+                if (table.TableRows.Count > 2)
+                    return true;
+                table = ie.Table(Find.ById("credit-table"));
             }
             return false;
         }
