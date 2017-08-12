@@ -883,29 +883,36 @@ namespace FutureOptionDaily_HtmlAgility
             ie.Link(Find.ByClass("button search")).Click();
             
             Table table = ie.Table(Find.ById("credit-table"));
-            WaitForMarginTable(ref table,ie, 10);
-            long.TryParse(table.TableRows[2].TableCells[4].Text.Replace(",", string.Empty), out y_Sell);
-            long.TryParse(table.TableRows[2].TableCells[5].Text.Replace(",", string.Empty), out t_Sell);
-            long.TryParse(table.TableRows[3].TableCells[4].Text.Replace(",", string.Empty), out y_Buy);
-            long.TryParse(table.TableRows[3].TableCells[5].Text.Replace(",", string.Empty), out t_Buy);
-            Buy = Math.Round((double)((t_Buy - y_Buy) / 100000), 3);
+            if (WaitForMarginTable(ref table, ie, 10))
+            {
+                long.TryParse(table.TableRows[2].TableCells[4].Text.Replace(",", string.Empty), out y_Sell);
+                long.TryParse(table.TableRows[2].TableCells[5].Text.Replace(",", string.Empty), out t_Sell);
+                long.TryParse(table.TableRows[3].TableCells[4].Text.Replace(",", string.Empty), out y_Buy);
+                long.TryParse(table.TableRows[3].TableCells[5].Text.Replace(",", string.Empty), out t_Buy);
+                Buy = Math.Round((double)((t_Buy - y_Buy) / 100000), 3);
 
-            // 資增減
-            ws_New.Cells[9, 10].Value2 = (Buy >= 0) ? "資增" + Buy.ToString() + "億" : "資減" + Math.Abs(Buy).ToString() + "億";
+                // 資增減
+                ws_New.Cells[9, 10].Value2 = (Buy >= 0) ? "資增" + Buy.ToString() + "億" : "資減" + Math.Abs(Buy).ToString() + "億";
 
-            // 券增減
-            ws_New.Cells[9, 11].Value2 = (t_Sell > y_Sell) ? "券增" + (t_Sell - y_Sell).ToString() + "張" : "券減" + (y_Sell - t_Sell).ToString() + "張";
+                // 券增減
+                ws_New.Cells[9, 11].Value2 = (t_Sell > y_Sell) ? "券增" + (t_Sell - y_Sell).ToString() + "張" : "券減" + (y_Sell - t_Sell).ToString() + "張";
 
-            // 上色
-            if (ws_New.Range["J9"].Value2.ToString().Contains("資增"))
-                ws_New.Range["J9"].Font.Color = -16776961;
+                // 上色
+                if (ws_New.Range["J9"].Value2.ToString().Contains("資增"))
+                    ws_New.Range["J9"].Font.Color = -16776961;
+                else
+                    ws_New.Range["J9"].Font.Color = -11489280;
+
+                if (ws_New.Range["K9"].Value2.ToString().Contains("券增"))
+                    ws_New.Range["K9"].Font.Color = -16776961;
+                else
+                    ws_New.Range["K9"].Font.Color = -11489280;
+            }
             else
-                ws_New.Range["J9"].Font.Color = -11489280;
-
-            if (ws_New.Range["K9"].Value2.ToString().Contains("券增"))
-                ws_New.Range["K9"].Font.Color = -16776961;
-            else
-                ws_New.Range["K9"].Font.Color = -11489280;
+            {
+                MessageBox.Show("信用交易資料抓取發生逾時，請重新再試");
+                throw new TimeoutException();
+            }
         }
 
         private string ROCDate(DateTime date,bool noDate,int Format = 1)
