@@ -413,6 +413,7 @@ namespace FutureOptionDaily_HtmlAgility
             browser.FormElements.Where(x => x.GetAttributeValue("name", "").Equals("DATA_DATE_Y")).First().SetAttributeValue("value", date.Year.ToString());
             browser.FormElements.Where(x => x.GetAttributeValue("name", "").Equals("DATA_DATE_M")).First().SetAttributeValue("value", date.Month.ToString());
             browser.FormElements.Where(x => x.GetAttributeValue("name", "").Equals("DATA_DATE_D")).First().SetAttributeValue("value", date.ToString("dd"));
+            browser.FormElements.Where(x => x.GetAttributeValue("id", "").Equals("market_code")).First().SetAttributeValue("value", "0");
             browser.FormElements.Where(x => x.GetAttributeValue("id", "").Equals("syear")).First().SetAttributeValue("value", date.Year.ToString());
             browser.FormElements.Where(x => x.GetAttributeValue("id", "").Equals("smonth")).First().SetAttributeValue("value", date.Month.ToString());
             browser.FormElements.Where(x => x.GetAttributeValue("id", "").Equals("sday")).First().SetAttributeValue("value", date.ToString("dd"));
